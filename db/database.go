@@ -24,6 +24,8 @@ type User struct {
 	TgId int
 }
 
+var DB *sql.DB
+
 func DbInit() sql.DB {
 	config := utils.ReadConfig()
 

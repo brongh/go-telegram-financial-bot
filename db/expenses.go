@@ -1,16 +1,15 @@
 package db
 
 import (
-	"database/sql"
 	"time"
 )
 
-func CreateExpense(db sql.DB, userId int, title string, amount float64, date string) error {
+func CreateExpense(userId int, title string, amount float64, date string) error {
 	query := `
 		INSERT INTO expenses (user_id, title, amount, expense_date)
 		VALUES ($1, $2, $3, $4)
 	`
-	_, err := db.Exec(query, userId, title, amount, date)
+	_, err := DB.Exec(query, userId, title, amount, date)
 
 	if err != nil {
 		return err
@@ -19,8 +18,8 @@ func CreateExpense(db sql.DB, userId int, title string, amount float64, date str
 	return nil
 }
 
-func ViewExpenses(db sql.DB, tgId int, month time.Month, year int) ([]Expense, error) {
-	user, err := GetUserByTgId(db, tgId)
+func ViewExpenses(tgId int, month time.Month, year int) ([]Expense, error) {
+	user, err := GetUserByTgId(tgId)
 	if err != nil {
 		return nil, err
 	}
@@ -34,7 +33,7 @@ func ViewExpenses(db sql.DB, tgId int, month time.Month, year int) ([]Expense, e
 		ORDER BY expense_date DESC
 	`
 	
-	rows, err := db.Query(query, user.Id, startDate, endDate)
+	rows, err := DB.Query(query, user.Id, startDate, endDate)
 	if err != nil {
 		return nil, err
 	}
@@ -51,8 +50,8 @@ func ViewExpenses(db sql.DB, tgId int, month time.Month, year int) ([]Expense, e
 	return expenses, nil
 }
 
-func RemoveExpense(b sql.DB, tgId int, expenseId int) (bool, error) {
-	user, err := GetUserByTgId(b, tgId)
+func RemoveExpense(tgId int, expenseId int) (bool, error) {
+	user, err := GetUserByTgId(tgId)
 	if err != nil {
 		return false, err
 	}
@@ -60,7 +59,7 @@ func RemoveExpense(b sql.DB, tgId int, expenseId int) (bool, error) {
 		DELETE FROM expenses
 		WHERE user_id = $1 AND id = $2
 	`
-	_, err = b.Exec(query, user.Id, expenseId)
+	_, err = DB.Exec(query, user.Id, expenseId)
 	if err != nil {
 		return false, err
 	}

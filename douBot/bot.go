@@ -130,7 +130,7 @@ func AddExpense(actionPayload []string, chat chatParams) {
 	var expense db.Expense
 	var msg tgbotapi.MessageConfig
 	lengthOfPayload := len(actionPayload)
-	userData, err := db.GetOrCreateUser(db.DbInit(), chat.username, chat.userID)
+	userData, err := db.GetOrCreateUser(chat.username, chat.userID)
 	if err != nil {
 		msg = tgbotapi.NewMessage(chat.chatID, "Sorry, something went wrong. Please try again later.")
 		bot.Send(msg)
@@ -149,7 +149,7 @@ func AddExpense(actionPayload []string, chat chatParams) {
 		}
 		expense.Amount = floatValue
 		expense.ExpenseDate = time.Now().Format("2006-01-02")
-		err = db.CreateExpense(db.DbInit(), expense.UserId, expense.Title, expense.Amount, expense.ExpenseDate)
+		err = db.CreateExpense(expense.UserId, expense.Title, expense.Amount, expense.ExpenseDate)
 		if err != nil {
 			msg = tgbotapi.NewMessage(chat.chatID, "Sorry, something went wrong. Please try again later.")
 			bot.Send(msg)
@@ -172,7 +172,7 @@ func AddExpense(actionPayload []string, chat chatParams) {
 			return
 		}
 		expense.ExpenseDate = expenseDate.Format("2006-01-02")
-		err = db.CreateExpense(db.DbInit(), expense.UserId, expense.Title, expense.Amount, expense.ExpenseDate)
+		err = db.CreateExpense(expense.UserId, expense.Title, expense.Amount, expense.ExpenseDate)
 		if err != nil {
 			msg = tgbotapi.NewMessage(chat.chatID, "Sorry, something went wrong. Please try again later.")
 			bot.Send(msg)
@@ -226,7 +226,7 @@ func handleCallbacks(update tgbotapi.Update) {
 				return
 			}
 			monthInt := int(parsedTime.Month())
-			expense, err := db.ViewExpenses(db.DbInit(), int(callBackID), time.Month(monthInt), yearInt)
+			expense, err := db.ViewExpenses(int(callBackID), time.Month(monthInt), yearInt)
 			if err != nil {
 				fmt.Print("db error: ", err)
 				msg := tgbotapi.NewMessage(callBackID, "Sorry, something went wrong. Please try again later.")
@@ -244,5 +244,5 @@ func handleCallbacks(update tgbotapi.Update) {
 }
 
 func DeleteExpense(tgId int, expenseId int)	( bool, error) {
-	return db.RemoveExpense(db.DbInit(), tgId, expenseId)
+	return db.RemoveExpense(tgId, expenseId)
 }
