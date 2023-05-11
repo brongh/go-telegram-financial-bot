@@ -8,7 +8,7 @@ import (
 
 func main(){
 	go douBot.StartBot()
-
+	//
 	for {
 		time.Sleep(60 * time.Second)
 	}
