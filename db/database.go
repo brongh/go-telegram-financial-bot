@@ -59,7 +59,6 @@ func setupSchema(db *sql.DB) error {
 			amount NUMERIC NOT NULL,
 			expense_date DATE NOT NULL
 		);`,
-		//
 	}
 
 	for _, stmt := range schemaStatements {
