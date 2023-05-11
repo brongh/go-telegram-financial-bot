@@ -2,14 +2,16 @@ package db
 
 import (
 	"database/sql"
+	"fmt"
 )
 
 func GetUserByTgId(tgId int) (*User, error) {
 	var user User
 	err := DB.QueryRow("SELECT id, username, tg_id FROM users WHERE tg_id = $1", tgId).Scan(&user.Id, &user.Username, &user.TgId)
-	if err == sql.ErrNoRows {
-		return nil, nil
-	} else if err != nil {
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, fmt.Errorf("user not found")
+		}
 		return nil, err
 	}
 	

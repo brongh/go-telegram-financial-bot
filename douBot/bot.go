@@ -131,6 +131,9 @@ func AddExpense(actionPayload []string, chat chatParams) {
 	var msg tgbotapi.MessageConfig
 	lengthOfPayload := len(actionPayload)
 	userData, err := db.GetOrCreateUser(chat.username, chat.userID)
+	if userData != nil {
+		fmt.Print("New user created. userId: ", userData)
+	}
 	if err != nil {
 		msg = tgbotapi.NewMessage(chat.chatID, "Sorry, something went wrong. Please try again later.")
 		bot.Send(msg)
