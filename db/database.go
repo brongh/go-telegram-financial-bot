@@ -27,7 +27,7 @@ type User struct {
 func DbInit() sql.DB {
 	config := utils.ReadConfig()
 
-	connStr := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", 
+	connStr := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s", 
 		config.Host, config.Port, config.DbUser, config.DbPassword, config.DbName)
 
 	db, err := sql.Open("postgres", connStr)
