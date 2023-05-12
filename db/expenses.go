@@ -5,11 +5,15 @@ import (
 )
 
 func CreateExpense(userId int, title string, amount float64, date string) error {
+	parsedDate, err := time.Parse("2006-01-02", date)
+	if err != nil {
+		return err
+	}
 	query := `
 		INSERT INTO expenses (user_id, title, amount, expense_date)
 		VALUES ($1, $2, $3, $4)
 	`
-	_, err := DB.Exec(query, userId, title, amount, date)
+	_, err = DB.Exec(query, userId, title, amount, parsedDate)
 
 	if err != nil {
 		return err

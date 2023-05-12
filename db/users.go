@@ -35,15 +35,18 @@ func insertUser(user *User) (*User, error) {
 func GetOrCreateUser(username string, tgId int) (*User, error) {
 	user, err := GetUserByTgId(tgId)
 	if err != nil {
-		return nil, err
-	}
-	if user != nil {
-		return user, nil
-	}
-	newUser := &User{
-		Username: username,
-		TgId: tgId,
-	}
+		if err.Error() != "user not found" {
+			return nil, err
+		}
 
-	return insertUser(newUser)
+		newUser := &User{
+			Username: username,
+			TgId: tgId,
+		}
+		user, err = insertUser(newUser)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return user, nil
 }
