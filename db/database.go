@@ -3,7 +3,6 @@ package db
 import (
 	"database/sql"
 	"fmt"
-	"log"
 
 	_ "github.com/lib/pq"
 
@@ -26,25 +25,30 @@ type User struct {
 
 var DB *sql.DB
 
-func DbInit() sql.DB {
+func GetDB() *sql.DB {
+	return DB
+}
+
+func DbInit() error {
 	config := utils.ReadConfig()
 
 	connStr := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s", 
 		config.Host, config.Port, config.DbUser, config.DbPassword, config.DbName)
 
-	db, err := sql.Open("postgres", connStr)
+	var err error
+	DB, err = sql.Open("postgres", connStr)
 
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
-	err = setupSchema(db)
+	err = setupSchema(DB)
 	if err != nil {
-		log.Fatal("Error creating tables: ", err)
+		return fmt.Errorf("Error creating tables: %v", err)
 	}
 
 	fmt.Println("Successfully connected to the PostgreSQL database!")
 
-	return *db
+	return nil
 }
 
 func setupSchema(db *sql.DB) error {

@@ -25,7 +25,10 @@ type chatParams struct {
 
 func StartBot() {
 	BotInit()
-	db.DbInit()
+	err := db.DbInit()
+	if err != nil {
+		log.Fatalf("Failed to initialize the database: %v", err)
+	}
 	u := tgbotapi.NewUpdate(0)
 	u.Timeout = 60
 

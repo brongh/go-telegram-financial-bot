@@ -13,7 +13,7 @@ func CreateExpense(userId int, title string, amount float64, date string) error 
 		INSERT INTO expenses (user_id, title, amount, expense_date)
 		VALUES ($1, $2, $3, $4)
 	`
-	_, err = DB.Exec(query, userId, title, amount, parsedDate)
+	_, err = GetDB().Exec(query, userId, title, amount, parsedDate)
 
 	if err != nil {
 		return err
@@ -37,7 +37,7 @@ func ViewExpenses(tgId int, month time.Month, year int) ([]Expense, error) {
 		ORDER BY expense_date DESC
 	`
 	
-	rows, err := DB.Query(query, user.Id, startDate, endDate)
+	rows, err := GetDB().Query(query, user.Id, startDate, endDate)
 	if err != nil {
 		return nil, err
 	}
@@ -63,7 +63,7 @@ func RemoveExpense(tgId int, expenseId int) (bool, error) {
 		DELETE FROM expenses
 		WHERE user_id = $1 AND id = $2
 	`
-	_, err = DB.Exec(query, user.Id, expenseId)
+	_, err = GetDB().Exec(query, user.Id, expenseId)
 	if err != nil {
 		return false, err
 	}
