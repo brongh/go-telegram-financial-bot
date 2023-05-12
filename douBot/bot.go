@@ -234,14 +234,14 @@ func handleCallbacks(update tgbotapi.Update) {
 				return
 			}
 			monthInt := int(parsedTime.Month())
-			expense, err := db.ViewExpenses(int(callBackID), time.Month(monthInt), yearInt)
+			expense, total, err := db.ViewExpenses(int(callBackID), time.Month(monthInt), yearInt)
 			if err != nil {
 				fmt.Print("db error: ", err)
 				msg := tgbotapi.NewMessage(callBackID, "Sorry, something went wrong. Please try again later.")
 				bot.Send(msg)
 				return
 			}
-			responseText = FormatExpenses(expense, month)
+			responseText = FormatExpenses(expense, total, month)
 		default:
 			responseText = "Sorry, something went wrong. Please try again later."
 		}

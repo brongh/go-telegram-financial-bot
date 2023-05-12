@@ -22,16 +22,16 @@ func CreateExpense(userId int, title string, amount float64, date string) error 
 	return nil
 }
 
-func ViewExpenses(tgId int, month time.Month, year int) ([]Expense, error) {
+func ViewExpenses(tgId int, month time.Month, year int) ([]Expense, float64, error) {
 	user, err := GetUserByTgId(tgId)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 	startDate := time.Date(year, month, 1, 0, 0, 0, 0, time.UTC)
 	endDate := startDate.AddDate(0, 1, 0)
 
 	query := `
-		SELECT id, title, amount, expense_date
+		SELECT id, title, amount, expense_date, SUM(amount) OVER () as total
 		FROM expenses
 		WHERE user_id = $1 AND expense_date >= $2 AND expense_date < $3
 		ORDER BY expense_date DESC
@@ -39,19 +39,20 @@ func ViewExpenses(tgId int, month time.Month, year int) ([]Expense, error) {
 	
 	rows, err := GetDB().Query(query, user.Id, startDate, endDate)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 	defer rows.Close()
 	expenses := []Expense{}
+	var total float64
 	for rows.Next() {
 		var expense Expense
-		err := rows.Scan(&expense.Id, &expense.Title, &expense.Amount, &expense.ExpenseDate)
+		err := rows.Scan(&expense.Id, &expense.Title, &expense.Amount, &expense.ExpenseDate, &total)
 		if err != nil {
-			return nil, err
+			return nil, 0, err
 		}
 		expenses = append(expenses, expense)
 	}
-	return expenses, nil
+	return expenses, total, nil
 }
 
 func RemoveExpense(tgId int, expenseId int) (bool, error) {

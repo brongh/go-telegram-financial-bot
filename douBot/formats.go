@@ -7,7 +7,7 @@ import (
 	db "github.com/brongh/go-telegram-financial-bot/db"
 )
 
-func FormatExpenses(expenses []db.Expense, month string) string {
+func FormatExpenses(expenses []db.Expense, total float64, month string) string {
 	if len(expenses) == 0 {
 		return "No expenses found"
 	}
@@ -18,6 +18,7 @@ func FormatExpenses(expenses []db.Expense, month string) string {
 		builder.WriteString(fmt.Sprintf("\n\nTitle: %s\nAmount: %.2f\nDate: %s\nID: %v\n\n=================================",
 		expense.Title, expense.Amount, expense.ExpenseDate, expense.Id))
 	}
+	builder.WriteString(fmt.Sprintf("\n\nTotal spending in %v: $%.2f", month ,total))
 
 	return builder.String()
 }
