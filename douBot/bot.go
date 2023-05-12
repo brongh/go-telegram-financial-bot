@@ -75,6 +75,7 @@ func onMessage(update tgbotapi.Update) {
 	log.Print("[**] Received msg from userID: ", chat.chatID)
 
 	if update.Message.IsCommand() {
+		log.Print("[**] Received command: ", update.Message.Command())
 		switch update.Message.Command() {
 		case "view":
 			msg := tgbotapi.NewMessage(chat.chatID, "Select which month's expenses you would like to view: ")
@@ -86,6 +87,7 @@ func onMessage(update tgbotapi.Update) {
 			bot.Send(msg)
 		}
 	} else {
+		log.Print("[**] Received message: ", update.Message.Text)
 		var msg tgbotapi.MessageConfig
 		inputStrings := strings.Split(chat.msgText, " ")
 		actionPayload := inputStrings[1:]

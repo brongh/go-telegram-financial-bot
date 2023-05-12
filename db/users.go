@@ -3,10 +3,11 @@ package db
 import (
 	"database/sql"
 	"fmt"
+	"log"
 )
 
 func GetUserByTgId(tgId int) (*User, error) {
-	fmt.Print("user telegram id: ", tgId)
+	log.Print("user telegram id: ", tgId)
 	var user User
 	err := DB.QueryRow("SELECT id, username, tg_id FROM users WHERE tg_id = $1", tgId).Scan(&user.Id, &user.Username, &user.TgId)
 	if err != nil {
@@ -20,7 +21,7 @@ func GetUserByTgId(tgId int) (*User, error) {
 }
 
 func insertUser(user *User) (*User, error) {
-	fmt.Print("creating userId: ", user.TgId)
+	log.Print("creating userId: ", user.TgId)
 	query := `
 		INSERT INTO users (username, tg_id)
 		VALUES ($1, $2)
